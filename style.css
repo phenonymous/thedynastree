@@ -510,7 +510,7 @@ ul {
 
 /* Center tree tables on all screen sizes */
 .fullWidth table {
-	display: block !important;
+	display: table !important;
 	margin: 5px auto !important;
 	text-align: center !important;
 	width: auto !important;
@@ -698,11 +698,21 @@ pre {
 
 /* Mobile and responsive styles */
 @media screen and (max-width: 768px) {
-	/* Allow body scrolling on mobile */
+	/* Enable natural page scrolling on mobile */
 	html, body {
-		overflow: auto;
-		height: auto;
+		overflow: auto !important;
+		overflow-x: hidden !important;
+		overflow-y: auto !important;
+		height: auto !important;
 		min-height: 100vh;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+	
+	/* Ensure body can scroll the entire page */
+	body {
+		margin: 0 !important;
+		padding: 0 !important;
 	}
 	
 	/* Hide the vertical divider on mobile */
@@ -710,30 +720,54 @@ pre {
 		display: none;
 	}
 	
-	/* Make columns stack vertically on mobile */
+	/* Make columns stack vertically as rows on mobile - enable full page scroll */
 	#app {
+		display: block !important; /* Use block layout for natural scrolling */
 		column-count: 1;
 		column-width: 100%;
-		min-height: 100vh;
+		height: auto !important; /* Remove height constraints */
+		min-height: auto !important;
+		max-height: none !important;
+		width: 100%;
+		overflow: visible !important; /* No container scrollbar */
+		position: static !important; /* Use normal document flow */
 	}
 	
 	.col {
-		position: relative;
-		min-width: 100%;
-		max-width: 100%;
-		width: 100%;
-		min-height: auto;
-		overflow-x: hidden;
-		overflow-y: visible;
+		position: static !important; /* Use normal document flow */
+		min-width: 100% !important;
+		max-width: 100% !important;
+		width: 100% !important;
+		height: auto !important;
+		min-height: auto !important;
+		max-height: none !important;
+		overflow: visible !important; /* No individual section scrollbars */
+		overflow-x: visible !important;
+		overflow-y: visible !important;
+		display: block !important; /* Stack naturally */
 	}
 	
 	.col.right {
-		min-width: 100%;
-		max-width: 100%;
-		width: 100%;
-		position: relative;
-		top: auto;
-		right: auto;
+		min-width: 100% !important;
+		max-width: 100% !important;
+		width: 100% !important;
+		position: static !important; /* Use normal document flow */
+		height: auto !important;
+		min-height: auto !important;
+		max-height: none !important; /* Remove all height limits */
+		overflow: visible !important; /* No separate scrollbar */
+		overflow-x: visible !important;
+		overflow-y: visible !important;
+		background-color: var(--background);
+		border-top: 2px solid var(--color);
+		padding: 10px;
+		box-sizing: border-box;
+	}
+	
+	/* Mobile-specific classes - use block layout for natural scrolling */
+	.col {
+		/* On mobile, these act as rows in a vertical stack */
+		display: block !important;
 	}
 	
 	/* Fix canvas positioning on mobile */
@@ -753,50 +787,50 @@ pre {
 		aspect-ratio: 500/455;
 	}
 	
-	/* Adjust overlay elements for mobile */
-	#optionWheel {
+	/* Mobile menu - display as horizontal row at top */
+	#optionWheel, #info, #discord, #achievements, #stats {
+		position: fixed !important;
 		top: 10px;
-		right: 10px;
-		width: 30px;
-		height: 30px;
+		width: 40px;
+		height: 40px;
+		z-index: 2147483647;
+		background-color: rgba(15, 15, 15, 0.8);
+		border-radius: 50%;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	
+	#optionWheel {
+		left: 10px;
 	}
 	
 	#info {
-		top: 50px;
-		right: 10px;
-		width: 30px;
-		height: 30px;
-		font-size: 24px;
+		left: 60px;
+		font-size: 20px;
 	}
 	
 	#discord {
-		top: 90px;
-		right: 10px;
-		width: 30px;
-		height: 30px;
+		left: 110px;
 	}
 	
 	#achievements {
-		top: 130px;
-		right: 10px;
-		width: 30px;
-		height: 30px;
+		left: 160px;
 		font-size: 24px;
 	}
 	
 	#stats {
-		top: 170px;
-		right: 10px;
-		width: 30px;
-		height: 30px;
+		left: 210px;
 		font-size: 24px;
 	}
 	
 	#version {
 		top: 10px;
-		left: 10px;
-		right: auto;
+		right: 10px; /* Move to top right to not interfere with horizontal menu */
+		left: auto;
 		font-size: 12px;
+		z-index: 2147483647; /* Ensure it's above other elements */
 	}
 	
 	/* Make buttons more touch-friendly */
@@ -837,43 +871,67 @@ pre {
 	h3 { font-size: 18px; }
 	h5 { font-size: 14px; }
 	
-	/* Add padding to prevent content from being hidden behind overlay icons */
+	/* Fix back button positioning on mobile */
+	.back {
+		position: relative !important; /* Change from absolute to relative */
+		top: auto !important;
+		left: auto !important;
+		display: inline-block !important;
+		margin: 10px !important;
+		padding: 10px 15px !important;
+		background-color: rgba(15, 15, 15, 0.9) !important;
+		border: 2px solid var(--color) !important;
+		border-radius: 5px !important;
+		font-size: 24px !important;
+		z-index: 1000 !important;
+	}
+	
+	/* Remove problematic padding and enable full page scrolling */
 	.fullWidth {
-		padding-top: 10px;
-		padding-right: 60px;
-		padding-left: 10px;
+		position: static !important; /* Use static positioning for natural flow */
+		height: auto !important;
+		min-height: auto !important; /* Remove all height constraints */
+		max-height: none !important;
+		width: 100%;
+		min-width: 100%;
+		overflow: visible !important; /* No scrollbars on this container */
+		overflow-x: visible !important;
+		overflow-y: visible !important;
+		transition-duration: 0s;
+		text-align: center;
 	}
 	
 	/* Make topbar buttons more mobile-friendly */
 	.topbarButton {
-		height: 40px;
+		height: 50px !important;
 		padding: 8px 4px;
 		font-size: 12px;
+		min-height: 50px;
+		margin: 0 !important; /* Remove any default margins */
 	}
-	
+
 	.topbarButton h5 {
 		font-size: 12px;
 		margin: 0;
+		line-height: 1.2;
 	}
 	
-	/* Simple tree centering on mobile */
-	.fullWidth {
-		position: relative;
-		height: auto;
-		min-height: 100vh;
-		width: 100%;
-		min-width: 100%;
-		overflow-y: visible;
-		overflow-x: hidden;
-		transition-duration: 0s;
-		padding-top: 10px;
-		padding-right: 60px;
-		padding-left: 10px;
-		padding-bottom: 20px;
-		text-align: center;
+	/* Ensure topbar doesn't interfere with scrolling and has no margins */
+	div[style*="position:sticky"] {
+		position: sticky !important;
+		top: 0 !important;
+		z-index: 1000 !important;
+		margin: 0 !important;
+		padding: 0 !important;
+		width: 100% !important;
+		box-sizing: border-box;
 	}
 	
-	/* Keep topbar as flexbox */
+	/* Remove margins from topbar container */
+	div[style*="display: flex"] {
+		margin: 0 !important;
+		padding: 0 !important;
+	}	/* Keep topbar as flexbox */
 	.fullWidth > div[style*="display:flex"] {
 		text-align: left !important;
 	}
@@ -914,14 +972,32 @@ pre {
 	
 	/* Smaller overlay elements for very small screens */
 	#optionWheel, #info, #discord, #achievements, #stats {
-		width: 25px;
-		height: 25px;
+		width: 35px;
+		height: 35px;
+	}
+	
+	#optionWheel {
+		left: 5px;
+	}
+	
+	#info {
+		left: 45px;
 		font-size: 18px;
 	}
 	
+	#discord {
+		left: 85px;
+	}
+	
+	#achievements {
+		left: 125px;
+		font-size: 20px;
+	}
+	
+	#stats {
+		left: 165px;
+		font-size: 20px;
+	}
+
 	/* Adjust positioning for smaller screens */
-	#info { top: 40px; }
-	#discord { top: 70px; }
-	#achievements { top: 100px; }
-	#stats { top: 130px; }
 }
