@@ -1088,12 +1088,17 @@ addLayer("t", {
 					abortConquering()
 				}
 			} else {
+				// Limit diff to prevent conquest cancellation from large time gaps (mobile focus issues)
+				let safeDiff = Math.min(diff, 5) // Cap at 5 seconds to prevent issues with mobile background/foreground transitions
+				
 				let delta = Decimal.div(player.world.health, soldierStats.mhp).mul(soldierStats ? soldierStats.spd : 0)
-				player.world.conquerProgress = Decimal.add(player.world.conquerProgress, Decimal.mul(delta, diff))
+				player.world.conquerProgress = Decimal.add(player.world.conquerProgress, Decimal.mul(delta, safeDiff))
 				if (player.world.conquerProgress.gte(player.world.conquerGoal)) {
 					player.world.conquerProgress = new Decimal(0)
 					doneConquering()
 				}
+				
+				// Use original diff for encounter chance calculation to maintain proper probability
 				var prob = Decimal.sub(1, Decimal.sub(1, player.world.encounterChance).pow(diff))
 				if (prob.gte(Math.random()))
 					player.world.encounter = getMapEncounter(player.world.conquerX, player.world.conquerY)

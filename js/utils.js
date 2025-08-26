@@ -625,3 +625,87 @@ var onFocused = false
 function focused(x) {
 	onFocused = x
 }
+
+// Handle page visibility changes for mobile conquest preservation
+var gameHidden = false
+var conquestPausedTime = 0
+
+// Store conquest state when page becomes hidden
+function handleVisibilityChange() {
+	if (typeof player === 'undefined') return;
+	
+	if (document.hidden || document.webkitHidden || document.msHidden) {
+		// Page is now hidden - store conquest state
+		gameHidden = true
+		if (player.world && player.world.conquering) {
+			conquestPausedTime = Date.now()
+		}
+	} else {
+		// Page is now visible - restore conquest state
+		if (gameHidden && player.world && player.world.conquering && conquestPausedTime > 0) {
+			// Calculate time that passed while hidden
+			var hiddenTime = (Date.now() - conquestPausedTime) / 1000
+			
+			// Apply the missed time to conquest progress if offline production is enabled
+			if (player.offlineProd && hiddenTime > 0) {
+				// Get soldier stats for conquest speed calculation
+				var soldierStats = tmp.layerEffs && tmp.layerEffs.so ? tmp.layerEffs.so : { mhp: new Decimal(100), spd: new Decimal(1) }
+				
+				// Only continue conquest if we have health and no active encounter
+				if (player.world.health && player.world.health.gt(0) && !player.world.encounter) {
+					var delta = Decimal.div(player.world.health, soldierStats.mhp).mul(soldierStats.spd)
+					var progressGain = Decimal.mul(delta, hiddenTime)
+					
+					player.world.conquerProgress = Decimal.add(player.world.conquerProgress, progressGain)
+					
+					// Check if conquest should complete
+					if (player.world.conquerProgress.gte(player.world.conquerGoal)) {
+						player.world.conquerProgress = new Decimal(0)
+						// Import the doneConquering function from map.js
+						if (typeof doneConquering === 'function') {
+							doneConquering()
+						}
+					}
+				}
+			}
+		}
+		gameHidden = false
+		conquestPausedTime = 0
+	}
+}
+
+// Add event listeners for different browsers
+if (typeof document !== 'undefined') {
+	// Standard visibility API
+	if (typeof document.addEventListener !== 'undefined') {
+		document.addEventListener('visibilitychange', handleVisibilityChange, false)
+	}
+	
+	// Webkit-based browsers (older Safari, Chrome)
+	if (typeof document.webkitHidden !== 'undefined') {
+		document.addEventListener('webkitvisibilitychange', handleVisibilityChange, false)
+	}
+	
+	// Internet Explorer and older browsers
+	if (typeof document.msHidden !== 'undefined') {
+		document.addEventListener('msvisibilitychange', handleVisibilityChange, false)
+	}
+	
+	// Fallback for older browsers using focus/blur events
+	window.addEventListener('focus', function() {
+		setTimeout(handleVisibilityChange, 100) // Small delay to ensure proper state
+	}, false)
+	
+	window.addEventListener('blur', function() {
+		handleVisibilityChange()
+	}, false)
+	
+	// Mobile-specific events
+	window.addEventListener('pageshow', function() {
+		setTimeout(handleVisibilityChange, 100)
+	}, false)
+	
+	window.addEventListener('pagehide', function() {
+		handleVisibilityChange()
+	}, false)
+}
