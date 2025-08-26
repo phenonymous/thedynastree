@@ -368,6 +368,53 @@ function importSave(imported = undefined, forced = false) {
 	}
 }
 
+function importSaveFromClipboard() {
+	if (!navigator.clipboard) {
+		alert("Clipboard access is not supported in this browser. Please use the regular import option.")
+		return
+	}
+	
+	navigator.clipboard.readText().then(function(clipboardText) {
+		if (!clipboardText) {
+			alert("No text found in clipboard!")
+			return
+		}
+		importSave(clipboardText)
+	}).catch(function(err) {
+		alert("Failed to read from clipboard: " + err.message)
+	})
+}
+
+function importSaveFromFile() {
+	const fileInput = document.createElement("input")
+	fileInput.type = "file"
+	fileInput.accept = ".txt,.save"
+	fileInput.style.display = "none"
+	
+	fileInput.onchange = function(event) {
+		const file = event.target.files[0]
+		if (!file) return
+		
+		const reader = new FileReader()
+		reader.onload = function(e) {
+			const fileContent = e.target.result
+			if (!fileContent) {
+				alert("File appears to be empty!")
+				return
+			}
+			importSave(fileContent)
+		}
+		reader.onerror = function() {
+			alert("Failed to read file!")
+		}
+		reader.readAsText(file)
+	}
+	
+	document.body.appendChild(fileInput)
+	fileInput.click()
+	document.body.removeChild(fileInput)
+}
+
 function versionCheck() {
 	let setVersion = true
 
