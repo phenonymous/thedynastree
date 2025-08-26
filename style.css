@@ -514,6 +514,7 @@ ul {
 	margin: 5px auto !important;
 	text-align: center !important;
 	width: auto !important;
+	white-space: nowrap !important; /* Prevent nodes from wrapping to new line */
 }
 
 .fullWidth table td {
@@ -707,6 +708,8 @@ pre {
 		min-height: 100vh;
 		margin: 0 !important;
 		padding: 0 !important;
+		touch-action: pan-y !important; /* Allow vertical scrolling only */
+		-webkit-overflow-scrolling: touch !important; /* Smooth iOS scrolling */
 	}
 	
 	/* Ensure body can scroll the entire page */
@@ -731,6 +734,7 @@ pre {
 		width: 100%;
 		overflow: visible !important; /* No container scrollbar */
 		position: static !important; /* Use normal document flow */
+		touch-action: pan-y !important; /* Allow vertical scrolling */
 	}
 	
 	.col {
@@ -845,6 +849,10 @@ pre {
 		min-height: 60px;
 		font-size: 14px;
 		padding: 5px;
+		width: 48%; /* Allow 2 buttons side by side with small gap */
+		margin: 1%;
+		display: inline-block;
+		box-sizing: border-box;
 	}
 	
 	/* Better spacing for mobile */
@@ -943,19 +951,32 @@ pre {
 		height: 80px;
 		width: 80px;
 		font-size: 28px;
-		margin: 8px !important;
+		margin: 6px !important; /* Slightly smaller margin to fit 5 nodes */
 		display: inline-block;
 		vertical-align: middle;
+	}
+	
+	/* Ensure table rows don't wrap on mobile */
+	.fullWidth table {
+		width: 100% !important;
+		table-layout: auto !important;
+		white-space: nowrap !important;
+	}
+	
+	.fullWidth table td {
+		white-space: nowrap !important;
 	}
 }
 
 @media screen and (max-width: 480px) {
 	/* Extra small screens */
 	.treeNode {
-		min-height: 60px;
-		min-width: 60px;
-		font-size: 24px;
-		margin: 4px;
+		min-height: 55px;
+		min-width: 55px;
+		height: 55px;
+		width: 55px;
+		font-size: 20px;
+		margin: 3px !important; /* Smaller margin to fit 5 nodes on very small screens */
 	}
 	
 	#mapbox {
