@@ -239,14 +239,24 @@ function abortConquering() {
 var mapMouse = false
 var mapMouseX = 0
 var mapMouseY = 0
+
+function getEventCoords(e) {
+	if (e.touches && e.touches.length > 0) {
+		return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+	}
+	return { x: e.clientX, y: e.clientY };
+}
+
 function onMapMouseDown (e) {
+	e.preventDefault();
 	mapMouse = true
-	mapMouseX = e.clientX
-	mapMouseY = e.clientY
+	const coords = getEventCoords(e);
+	mapMouseX = coords.x;
+	mapMouseY = coords.y;
 	
 	var oldX = mapFocusX; var oldY = mapFocusY
-	mapFocusX = parseInt((e.clientX - $("#mapbox").offset().left - 2) / 16 + Math.floor(mapX))
-	mapFocusY = parseInt((e.clientY - $("#mapbox").offset().top) / 25 + Math.floor(mapY))
+	mapFocusX = parseInt((coords.x - $("#mapbox").offset().left - 2) / 16 + Math.floor(mapX))
+	mapFocusY = parseInt((coords.y - $("#mapbox").offset().top) / 25 + Math.floor(mapY))
 	if (oldX === mapFocusX && oldY === mapFocusY) {
 		if (player.world.conquering && player.world.conquerX === mapFocusX && player.world.conquerY === mapFocusY)
 			abortConquering()
@@ -262,13 +272,17 @@ function onMapMouseDown (e) {
 
 function onMapMouseMove (e) {
 	if (mapMouse) {
-		mapX = Math.max(0, Math.min(219, mapX + (mapMouseX - e.clientX) / 16))
-		mapY = Math.max(0, Math.min(182, mapY + (mapMouseY - e.clientY) / 24))
-		mapMouseX = e.clientX
-		mapMouseY = e.clientY
+		e.preventDefault();
+		const coords = getEventCoords(e);
+		mapX = Math.max(0, Math.min(219, mapX + (mapMouseX - coords.x) / 16))
+		mapY = Math.max(0, Math.min(182, mapY + (mapMouseY - coords.y) / 24))
+		mapMouseX = coords.x;
+		mapMouseY = coords.y;
 	}
 }
+
 function onMapMouseUp (e) {
+	e.preventDefault();
 	mapMouse = false
 }
 

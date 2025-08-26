@@ -15,7 +15,8 @@
 body {
 	background-color: var(--background);
 	color: var(--color);
-	overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
 	--background: #0f0f0f;
 	--color: #dfdfdf;
 	--points: #ffffff;
@@ -27,7 +28,8 @@ html, body {
 }
 
 td {
-	padding: 0
+	padding: 0;
+	text-align: center;
 }
 
 .upgTable {
@@ -86,9 +88,17 @@ h1, h2, h3, b, input, .tabButton {
 	cursor: pointer;
 }
 
-	.can:hover {
+	.can:hover, .can:active {
 		transform: scale(1.15, 1.15);
 		box-shadow: 0px 0px 20px var(--points)
+	}
+	
+	/* Touch-friendly active states for mobile */
+	@media (pointer: coarse) {
+		.can:active {
+			transform: scale(1.15, 1.15);
+			box-shadow: 0px 0px 20px var(--points);
+		}
 	}
 
 .treeNode.notify {
@@ -373,6 +383,7 @@ a {
 	left: 0;
 	position: absolute;
 	z-index: -999;
+	pointer-events: none;
 }
 
 .milestone {
@@ -488,7 +499,32 @@ ul {
 	min-width: 100%;
 	overflow-y: auto;
 	overflow-x: auto;
-	transition-duration: 0s
+	transition-duration: 0s;
+	text-align: center;
+}
+
+/* Keep topbar left-aligned */
+.fullWidth > div[style*="display:flex"] {
+	text-align: left !important;
+}
+
+/* Center tree tables on all screen sizes */
+.fullWidth table {
+	display: block !important;
+	margin: 5px auto !important;
+	text-align: center !important;
+	width: auto !important;
+}
+
+.fullWidth table td {
+	display: inline-block !important;
+	text-align: center !important;
+	vertical-align: middle !important;
+}
+
+/* Force center the tree container divs */
+.fullWidth > div {
+	text-align: center !important;
 }
 
 [tooltip] {
@@ -563,6 +599,13 @@ ul {
 	height: 455px;
 	border: 2px solid;
 	border-color: rgba(255, 255, 255, 0.125) rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.25) rgba(255, 255, 255, 0.125);
+	touch-action: pan-x pan-y;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .bar {
@@ -651,4 +694,234 @@ pre {
     white-space: -pre-wrap;
     white-space: -o-pre-wrap;
     word-wrap: break-word;
+}
+
+/* Mobile and responsive styles */
+@media screen and (max-width: 768px) {
+	/* Allow body scrolling on mobile */
+	html, body {
+		overflow: auto;
+		height: auto;
+		min-height: 100vh;
+	}
+	
+	/* Hide the vertical divider on mobile */
+	.vl {
+		display: none;
+	}
+	
+	/* Make columns stack vertically on mobile */
+	#app {
+		column-count: 1;
+		column-width: 100%;
+		min-height: 100vh;
+	}
+	
+	.col {
+		position: relative;
+		min-width: 100%;
+		max-width: 100%;
+		width: 100%;
+		min-height: auto;
+		overflow-x: hidden;
+		overflow-y: visible;
+	}
+	
+	.col.right {
+		min-width: 100%;
+		max-width: 100%;
+		width: 100%;
+		position: relative;
+		top: auto;
+		right: auto;
+	}
+	
+	/* Fix canvas positioning on mobile */
+	.canvas {
+		position: absolute;
+		z-index: -999;
+		pointer-events: none;
+		top: 0;
+		left: 0;
+	}
+	
+	/* Make the mapbox responsive */
+	#mapbox {
+		width: min(100vw - 20px, 500px);
+		height: auto;
+		max-width: 500px;
+		aspect-ratio: 500/455;
+	}
+	
+	/* Adjust overlay elements for mobile */
+	#optionWheel {
+		top: 10px;
+		right: 10px;
+		width: 30px;
+		height: 30px;
+	}
+	
+	#info {
+		top: 50px;
+		right: 10px;
+		width: 30px;
+		height: 30px;
+		font-size: 24px;
+	}
+	
+	#discord {
+		top: 90px;
+		right: 10px;
+		width: 30px;
+		height: 30px;
+	}
+	
+	#achievements {
+		top: 130px;
+		right: 10px;
+		width: 30px;
+		height: 30px;
+		font-size: 24px;
+	}
+	
+	#stats {
+		top: 170px;
+		right: 10px;
+		width: 30px;
+		height: 30px;
+		font-size: 24px;
+	}
+	
+	#version {
+		top: 10px;
+		left: 10px;
+		right: auto;
+		font-size: 12px;
+	}
+	
+	/* Make buttons more touch-friendly */
+	.treeNode {
+		min-height: 80px;
+		min-width: 80px;
+		font-size: 32px;
+		margin: 8px;
+	}
+	
+	.opt, .option {
+		min-height: 60px;
+		font-size: 14px;
+		padding: 5px;
+	}
+	
+	/* Better spacing for mobile */
+	.upgTable, .upgRow {
+		max-width: 100%;
+		flex-wrap: wrap;
+	}
+	
+	/* Modal adjustments for mobile */
+	.modal {
+		max-width: 90%;
+		margin: 10px;
+	}
+	
+	/* Make bars responsive */
+	.bar, .mini-bar {
+		width: calc(100% - 20px);
+		max-width: 500px;
+	}
+	
+	/* Better font sizes for mobile readability */
+	h1 { font-size: 24px; }
+	h2 { font-size: 20px; }
+	h3 { font-size: 18px; }
+	h5 { font-size: 14px; }
+	
+	/* Add padding to prevent content from being hidden behind overlay icons */
+	.fullWidth {
+		padding-top: 10px;
+		padding-right: 60px;
+		padding-left: 10px;
+	}
+	
+	/* Make topbar buttons more mobile-friendly */
+	.topbarButton {
+		height: 40px;
+		padding: 8px 4px;
+		font-size: 12px;
+	}
+	
+	.topbarButton h5 {
+		font-size: 12px;
+		margin: 0;
+	}
+	
+	/* Simple tree centering on mobile */
+	.fullWidth {
+		position: relative;
+		height: auto;
+		min-height: 100vh;
+		width: 100%;
+		min-width: 100%;
+		overflow-y: visible;
+		overflow-x: hidden;
+		transition-duration: 0s;
+		padding-top: 10px;
+		padding-right: 60px;
+		padding-left: 10px;
+		padding-bottom: 20px;
+		text-align: center;
+	}
+	
+	/* Keep topbar as flexbox */
+	.fullWidth > div[style*="display:flex"] {
+		text-align: left !important;
+	}
+	
+	/* Ensure tree nodes are properly spaced and centered on mobile */
+	.treeNode {
+		min-height: 80px;
+		min-width: 80px;
+		height: 80px;
+		width: 80px;
+		font-size: 28px;
+		margin: 8px !important;
+		display: inline-block;
+		vertical-align: middle;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	/* Extra small screens */
+	.treeNode {
+		min-height: 60px;
+		min-width: 60px;
+		font-size: 24px;
+		margin: 4px;
+	}
+	
+	#mapbox {
+		width: calc(100vw - 10px);
+		height: auto;
+	}
+	
+	.opt, .option {
+		min-height: 50px;
+		font-size: 12px;
+		width: 45%;
+		margin: 2px;
+	}
+	
+	/* Smaller overlay elements for very small screens */
+	#optionWheel, #info, #discord, #achievements, #stats {
+		width: 25px;
+		height: 25px;
+		font-size: 18px;
+	}
+	
+	/* Adjust positioning for smaller screens */
+	#info { top: 40px; }
+	#discord { top: 70px; }
+	#achievements { top: 100px; }
+	#stats { top: 130px; }
 }

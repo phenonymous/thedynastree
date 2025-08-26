@@ -350,7 +350,13 @@ function loadVue() {
 	
 	Vue.component('map-box', {
 		template: `
-			<canvas id="mapbox" style="font-stretch:150%" width="500px" height="455px" onmousedown="onMapMouseDown(event)" onmousemove="onMapMouseMove(event)" onmouseup="onMapMouseUp(event)">
+			<canvas id="mapbox" style="font-stretch:150%; max-width: 100%; height: auto;" width="500px" height="455px" 
+				onmousedown="onMapMouseDown(event)" 
+				onmousemove="onMapMouseMove(event)" 
+				onmouseup="onMapMouseUp(event)"
+				ontouchstart="onMapMouseDown(event)"
+				ontouchmove="onMapMouseMove(event)"
+				ontouchend="onMapMouseUp(event)">
 			</canvas>
 		`
 	})
