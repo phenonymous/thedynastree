@@ -171,10 +171,11 @@
 					<button class="option" onclick="save()">Instant save</button>
 					<button class="option" onclick="toggleOpt('autosave')">Autosave: {{ player.autosave?"ENABLED":"DISABLED" }}</button>
 					<button class="option" onclick="exportSave()">Export save to clipboard</button>
+					<button class="option" onclick="exportSaveToFile()">Export save to file</button>
 					<button class="option" onclick="importSave()">Import save</button>
-					<button class="option" onclick="importSaveFromClipboard()">Import from clipboard</button>
 				</div>
 				<div style="display:flex">
+					<button class="option" onclick="importSaveFromClipboard()">Import from clipboard</button>
 					<button class="option" onclick="importSaveFromFile()">Import from file</button>
 					<button class="option" onclick="hardReset()">HARD RESET THE GAME</button>
 				</div>
@@ -199,13 +200,13 @@
 				</tr>
 				<tr>
 					<td><button class="opt" onclick="exportSave()">Export to clipboard</button></td>
+					<td><button class="opt" onclick="exportSaveToFile()">Export to file</button></td>
 					<td><button class="opt" onclick="importSave()">Import</button></td>
-					<td><button class="opt" onclick="toggleOpt('offlineProd')">Offline Prod: {{ player.offlineProd?"ON":"OFF" }}</button></td>
 				</tr>
 				<tr>
 					<td><button class="opt" onclick="importSaveFromClipboard()">Import from clipboard</button></td>
 					<td><button class="opt" onclick="importSaveFromFile()">Import from file</button></td>
-					<td></td>
+					<td><button class="opt" onclick="toggleOpt('offlineProd')">Offline Prod: {{ player.offlineProd?"ON":"OFF" }}</button></td>
 				</tr>
 				<tr>
 					<td><button class="opt" onclick="switchTheme()">Theme: {{ getThemeName() }}</button></td>
