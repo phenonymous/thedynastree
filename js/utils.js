@@ -343,13 +343,40 @@ function load() {
 function exportSave() {
 	let str = btoa(JSON.stringify(player))
 
-	const el = document.createElement("textarea");
-	el.value = str;
-	document.body.appendChild(el);
-	el.select();
-	el.setSelectionRange(0, 99999);
-	document.execCommand("copy");
-	document.body.removeChild(el);
+	// Try modern Clipboard API first (better for mobile)
+	if (navigator.clipboard && navigator.clipboard.writeText) {
+		navigator.clipboard.writeText(str).then(function() {
+			alert("Save exported to clipboard!")
+		}).catch(function(err) {
+			// Fallback to legacy method if modern API fails
+			console.warn("Clipboard API failed:", err.message)
+			exportSaveLegacy(str)
+		})
+	} else {
+		// Fallback for browsers without Clipboard API
+		exportSaveLegacy(str)
+	}
+}
+
+function exportSaveLegacy(str) {
+	try {
+		const el = document.createElement("textarea");
+		el.value = str;
+		document.body.appendChild(el);
+		el.select();
+		el.setSelectionRange(0, 99999);
+		document.execCommand("copy");
+		document.body.removeChild(el);
+		alert("Save exported to clipboard!")
+	} catch (err) {
+		// If clipboard fails entirely, suggest file export
+		console.warn("Clipboard export failed:", err.message)
+		if (confirm("Clipboard export failed. Would you like to download the save as a file instead?")) {
+			exportSaveToFile()
+		} else {
+			alert("Export failed. Please try the 'Export to File' option.")
+		}
+	}
 }
 
 function importSave(imported = undefined, forced = false) {
@@ -366,6 +393,29 @@ function importSave(imported = undefined, forced = false) {
 	} catch (e) {
 		return;
 	}
+}
+
+function exportSaveToFile() {
+	let str = btoa(JSON.stringify(player))
+	
+	// Create blob and download link
+	const blob = new Blob([str], { type: 'text/plain' })
+	const url = URL.createObjectURL(blob)
+	
+	// Create download link
+	const downloadLink = document.createElement('a')
+	downloadLink.href = url
+	downloadLink.download = `dynastree-save-${Date.now()}.txt`
+	downloadLink.style.display = 'none'
+	
+	// Trigger download
+	document.body.appendChild(downloadLink)
+	downloadLink.click()
+	document.body.removeChild(downloadLink)
+	
+	// Clean up
+	URL.revokeObjectURL(url)
+	alert("Save downloaded as file!")
 }
 
 function importSaveFromClipboard() {
